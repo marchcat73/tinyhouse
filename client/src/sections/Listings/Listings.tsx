@@ -1,11 +1,13 @@
 import React from 'react';
 import { gql } from 'apollo-boost';
 import { useQuery, useMutation } from 'react-apollo';
+import { Avatar, Button, List, Spin } from 'antd';
 import { Listings as ListingsData } from './__generated__/Listings';
 import {
   DeleteListing as DeleteListingData,
   DeleteListingVariables
 } from './__generated__/DeleteListing';
+import './styles/Listings.css';
 
 const LISTINGS = gql`
   query Listings {
@@ -52,18 +54,28 @@ export const Listings = ({ title }: Props) => {
   const listings = data ? data.listings : null;
 
   const listingsList = listings ? (
-    <ul>
-      {listings.map(listing => {
-        return (
-          <li key={listing.id}>
-            {listing.title}
-            <button onClick={() => handleDeleteListing(listing.id)}>
+    <List
+      itemLayout="horizontal"
+      dataSource={listings}
+      renderItem={listing => (
+        <List.Item
+          actions={[
+            <Button
+              type="primary"
+              onClick={() => handleDeleteListing(listing.id)}
+            >
               Delete
-            </button>
-          </li>
-        );
-      })}
-    </ul>
+            </Button>
+          ]}
+        >
+          <List.Item.Meta
+            title={listing.title}
+            description={listing.address}
+            avatar={<Avatar src={listing.image} shape="square" size={48} />}
+          />
+        </List.Item>
+      )}
+    />
   ) : null;
 
   if (loading) {
@@ -74,20 +86,21 @@ export const Listings = ({ title }: Props) => {
     return <h2>Error</h2>;
   }
 
-  const deleteListingLoadingMessage = deleteListingLoading ? (
-    <h4>Deletion on progress</h4>
-  ) : null;
+  // const deleteListingLoadingMessage = deleteListingLoading ? (
+  //   <h4>Deletion on progress</h4>
+  // ) : null;
 
   const deleteListingErrorMessage = deleteListingError ? (
     <h4>Uh oh! Someting went wrong with deleting - please try again later</h4>
   ) : null;
 
   return (
-    <div>
-      <h2>{title}</h2>
-      {listingsList}
-      {deleteListingLoadingMessage}
-      {deleteListingErrorMessage}
+    <div className="listings">
+      <Spin spinning={deleteListingLoading}>
+        <h2>{title}</h2>
+        {listingsList}
+        {deleteListingErrorMessage}
+      </Spin>
     </div>
   );
 };
