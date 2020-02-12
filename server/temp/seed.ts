@@ -2,7 +2,11 @@ require('dotenv').config();
 
 import { ObjectId } from 'mongodb';
 import { connectDatabase } from '../src/database';
-import { Listing } from '../src/lib/types';
+import { Listing, ListingType, User } from '../src/lib/types';
+
+const listing: Listing[] = [];
+
+const users: User[] = [];
 
 const seed = async () => {
   try {
