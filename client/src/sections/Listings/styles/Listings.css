@@ -2,3 +2,7 @@
   margin: 20px;
   max-width: 750px;
 }
+
+.listings .listings__alert {
+  margin-bottom: 20px;
+}
